@@ -2,7 +2,7 @@
   "version": 3,
   "targets": {
     "net8.0": {
-      "Microsoft.AspNetCore.OpenApi/8.0.1": {
+      "Microsoft.AspNetCore.OpenApi/8.0.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.OpenApi": "1.4.3"
@@ -111,10 +111,10 @@
     }
   },
   "libraries": {
-    "Microsoft.AspNetCore.OpenApi/8.0.1": {
-      "sha512": "JF0U31SByntKEhZNC8ch3CD87BLZb5AzSujOBppLdvnjYu3W2XZvlsol5hUJfxiaHOp720cUiL6wzG8Bv0fI2Q==",
+    "Microsoft.AspNetCore.OpenApi/8.0.3": {
+      "sha512": "mUq0UL+H7UtA3Jud/7/BC7n5W2c4zCvTFUa2hE2+/oQqATa4oGHb87ETON09SEWkcbBRTz3WM16kTE+zuoXq2A==",
       "type": "package",
-      "path": "microsoft.aspnetcore.openapi/8.0.1",
+      "path": "microsoft.aspnetcore.openapi/8.0.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -122,7 +122,7 @@
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net8.0/Microsoft.AspNetCore.OpenApi.dll",
         "lib/net8.0/Microsoft.AspNetCore.OpenApi.xml",
-        "microsoft.aspnetcore.openapi.8.0.1.nupkg.sha512",
+        "microsoft.aspnetcore.openapi.8.0.3.nupkg.sha512",
         "microsoft.aspnetcore.openapi.nuspec"
       ]
     },
@@ -455,7 +455,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "Microsoft.AspNetCore.OpenApi >= 8.0.1",
+      "Microsoft.AspNetCore.OpenApi >= 8.0.3",
       "Swashbuckle.AspNetCore >= 6.4.0"
     ]
   },
@@ -466,11 +466,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\deiby\\Documents\\Coding\\Taller-movil\\Backend\\user\\user.csproj",
-      "projectName": "user",
-      "projectPath": "C:\\Users\\deiby\\Documents\\Coding\\Taller-movil\\Backend\\user\\user.csproj",
+      "projectUniqueName": "C:\\Users\\deiby\\Documents\\Coding\\Taller-movil\\Backend\\User\\User.csproj",
+      "projectName": "User",
+      "projectPath": "C:\\Users\\deiby\\Documents\\Coding\\Taller-movil\\Backend\\User\\User.csproj",
       "packagesPath": "C:\\Users\\deiby\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\deiby\\Documents\\Coding\\Taller-movil\\Backend\\user\\obj\\",
+      "outputPath": "C:\\Users\\deiby\\Documents\\Coding\\Taller-movil\\Backend\\User\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -498,6 +498,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -506,7 +511,7 @@
         "dependencies": {
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
-            "version": "[8.0.1, )"
+            "version": "[8.0.3, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
@@ -532,7 +537,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

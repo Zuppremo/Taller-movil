@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "TYqzllwa/gU6qB9SRxec+aZrlbjWTPKsiPG0eqic0qHcDbIR0RcQkUfNY+AzDl0FBbL9aH5WfgjF0pM4Yi8oPw==",
+  "dgSpecHash": "Yfb1zBkQBL27PGf0sfDLqSNzvJ/ihzQtbVy/Zs+flIc4tYLqSLVPPb7+bXYmg3ooQL0ZDaHf8xlniZEvwca2xA==",
   "success": true,
   "projectFilePath": "C:\\Users\\deiby\\Documents\\Coding\\Taller-movil\\Backend\\user\\user.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\deiby\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.1\\microsoft.aspnetcore.openapi.8.0.1.nupkg.sha512",
+    "C:\\Users\\deiby\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.3\\microsoft.aspnetcore.openapi.8.0.3.nupkg.sha512",
     "C:\\Users\\deiby\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\deiby\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",
     "C:\\Users\\deiby\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
