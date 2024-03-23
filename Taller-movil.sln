@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{CF61C1D9-8703-4D74-B80B-AA466C3DC1E3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "user", "Backend\user\user.csproj", "{89A34DBA-5FAA-4FF9-B2DE-DA752E79A6D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User", "Backend\user\User.csproj", "{89A34DBA-5FAA-4FF9-B2DE-DA752E79A6D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
