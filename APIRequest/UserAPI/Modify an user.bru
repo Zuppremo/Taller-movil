@@ -1,0 +1,19 @@
+meta {
+  name: Modify an user
+  type: http
+  seq: 3
+}
+
+put {
+  url: https://localhost:7004/api/User/3
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Laurent Bernardelli",
+    "email": "lbernardelli2@geocities.jp",
+    "password": "jY7&`W'}_R5"
+  }
+}

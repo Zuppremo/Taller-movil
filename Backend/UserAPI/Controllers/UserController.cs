@@ -33,12 +33,13 @@ namespace UserAPI.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public async Task<string> Get(int id)
+        public async Task<User> Get(int id)
         {
             await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
             await connection.OpenAsync();
 
-            using var command = new MySqlCommand($"SELECT id_user, user_name, user_email, user_password FROM user WHERE id_user = {id};", connection);
+            using var command = new MySqlCommand(@"SELECT id_user, user_name, user_email, user_password FROM user WHERE id_user = @Id", connection);
+            command.Parameters.AddWithValue("@Id", id);
             await using var reader = await command.ExecuteReaderAsync();
             User user = new User();
             while (await reader.ReadAsync())
@@ -49,7 +50,7 @@ namespace UserAPI.Controllers
                 user.Password = reader.GetString(3);
             }
             await connection.CloseAsync();
-            return $"User ID:{id}, User name: {user.Name}, User Email: {user.Email}, User Password: {user.Password}";
+            return user;
         }
 
         // POST api/<UserController>
@@ -74,7 +75,7 @@ namespace UserAPI.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<string> Put(int id, string name, string email, string password)
+        public async Task<User> Put(int id, string name, string email, string password)
         {
             await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
             await connection.OpenAsync();
@@ -84,9 +85,14 @@ namespace UserAPI.Controllers
             command.Parameters.AddWithValue("@Name", name);
             command.Parameters.AddWithValue("@Email", email);
             command.Parameters.AddWithValue("@Password", password);
+            User user = new User();
+            user.Id = id;
+            user.Name = name;
+            user.Email = email;
+            user.Password = password;
             await using var reader = await command.ExecuteReaderAsync();
             await connection.CloseAsync();
-            return $"User {id}, updated with new data: Name: {name}, Email: {email}, Password: {password}";
+            return user;
         }
 
         // DELETE api/<UserController>/5
