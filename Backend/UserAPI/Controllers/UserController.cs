@@ -55,7 +55,7 @@ namespace UserAPI.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public async Task<User>Post(string name, string email, string password)
+        public async Task<User> Post(string name, string email, string password)
         {
             await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
             await connection.OpenAsync();
@@ -121,6 +121,35 @@ namespace UserAPI.Controllers
             await using var deleteReader = await deleteCommand.ExecuteReaderAsync();
             await connection.CloseAsync();
             return userDeleted;
+        }
+
+        [HttpPost("{email}, {password}")]
+        public async Task<UserLogin> UserLogin(string email, string password)
+        {
+            UserLogin userLogin = new UserLogin();
+            await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
+            await connection.OpenAsync();
+            string sql = @"SELECT @user_email, @user_password FROM user;";
+            MySqlCommand command = new MySqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@user_email", email);
+            command.Parameters.AddWithValue("@user_password", password);
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                userLogin.Email = reader.GetString(0);
+                userLogin.Password = reader.GetString(1);
+            }
+            await connection.CloseAsync();
+            if (email == userLogin.Email && password == userLogin.Password)
+            {
+                string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+                userLogin.LoginToken = token;
+            }
+            else
+            {
+                userLogin.LoginToken = "No access";
+            }
+            return userLogin;
         }
     }
 }
