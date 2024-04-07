@@ -9,23 +9,22 @@
      <div class="form"> 
       <form [formGroup]="formLogin" (ngSubmit)="OnLogin(formLogin.value)">
          <div class="inputBox"> 
-            <input formControlName="userName" type="text"  required> <i>Username</i> 
+            <input formControlName="email" type="text"  required> <i>Email</i> 
+            <br>
          </div> 
          <div class="inputBox"> 
+            <br>
           <input formControlName="password" type="password" required> <i>Password</i> 
          </div> 
+         <br>
          <div class="links"> <a href="#">Forgot Password</a> <a href="#">Signup</a> 
          </div> 
+         <br>
          <div class="inputBox"> 
           <input type="submit" value="Login"> 
          </div> 
       </form>
-      
-
      </div> 
-
     </div> 
-
    </div> 
-
   </section> <!-- partial --> 
