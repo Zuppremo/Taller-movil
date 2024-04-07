@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using System.Net;
 using UserAPI.Models;
 
 namespace UserAPI.Controllers
@@ -123,32 +124,43 @@ namespace UserAPI.Controllers
             return userDeleted;
         }
 
-        [HttpPost("{email}, {password}")]
+        [HttpPost("Login")]
         public async Task<UserLogin> UserLogin(string email, string password)
         {
             UserLogin userLogin = new UserLogin();
             await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
             await connection.OpenAsync();
-            string sql = @"SELECT @user_email, @user_password FROM user;";
-            MySqlCommand command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@user_email", email);
-            command.Parameters.AddWithValue("@user_password", password);
+            string sqlEmailVerification = @"SELECT id_user FROM user WHERE user_email = @user_email;";
+            MySqlCommand command = new MySqlCommand(sqlEmailVerification, connection);
+            command.Parameters.AddWithValue("user_email", email);
             await using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
-            {
-                userLogin.Email = reader.GetString(0);
-                userLogin.Password = reader.GetString(1);
-            }
+                userLogin.Id = reader.GetInt32(0);
             await connection.CloseAsync();
-            if (email == userLogin.Email && password == userLogin.Password)
+            await connection.OpenAsync();
+            if (userLogin.Id > 0)
             {
-                string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-                userLogin.LoginToken = token;
+                string sqlPasswordVerification = @"SELECT user_password FROM user WHERE id_user = @id;";
+                MySqlCommand commandPassword = new MySqlCommand(sqlPasswordVerification, connection);
+                commandPassword.Parameters.AddWithValue("id", userLogin.Id);
+                await using var reader2 = await commandPassword.ExecuteReaderAsync();
+                while (await reader2.ReadAsync())
+                    userLogin.Password = reader2.GetString(0);
+
+                if (password == userLogin.Password) 
+                {
+                    string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+                    userLogin.LoginToken = token;
+                    Console.WriteLine("It's correct");
+                }
+                else
+                    Console.WriteLine("It's incorrect");
             }
             else
             {
-                userLogin.LoginToken = "No access";
+                Console.WriteLine("No existe ese email");
             }
+            await connection.CloseAsync();
             return userLogin;
         }
     }
