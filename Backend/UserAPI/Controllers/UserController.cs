@@ -125,43 +125,52 @@ namespace UserAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<UserLogin> UserLogin(string email, string password)
+        public async Task<ResponseLogin> UserLogin([FromBody] RequestLogin requestLogin)
         {
-            UserLogin userLogin = new UserLogin();
+            ResponseLogin userRequest = new ResponseLogin();
             await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
             await connection.OpenAsync();
             string sqlEmailVerification = @"SELECT id_user FROM user WHERE user_email = @user_email;";
             MySqlCommand command = new MySqlCommand(sqlEmailVerification, connection);
-            command.Parameters.AddWithValue("user_email", email);
+            command.Parameters.AddWithValue("user_email", requestLogin.Email);
             await using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
-                userLogin.Id = reader.GetInt32(0);
+                userRequest.Id = reader.GetInt32(0);
             await connection.CloseAsync();
             await connection.OpenAsync();
-            if (userLogin.Id > 0)
+            if (userRequest.Id > 0)
             {
                 string sqlPasswordVerification = @"SELECT user_password FROM user WHERE id_user = @id;";
                 MySqlCommand commandPassword = new MySqlCommand(sqlPasswordVerification, connection);
-                commandPassword.Parameters.AddWithValue("id", userLogin.Id);
+                commandPassword.Parameters.AddWithValue("id", userRequest.Id);
                 await using var reader2 = await commandPassword.ExecuteReaderAsync();
+                var temporaryPassword = string.Empty;
                 while (await reader2.ReadAsync())
-                    userLogin.Password = reader2.GetString(0);
+                    temporaryPassword = reader2.GetString(0);
 
-                if (password == userLogin.Password) 
+                if (requestLogin.Password == temporaryPassword) 
                 {
                     string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-                    userLogin.LoginToken = token;
+                    userRequest.LoginToken = token;
+                    userRequest.Status = "Ok";
+                    userRequest.responseData = new ResponseData(200, "Sucess, correct password");
                     Console.WriteLine("It's correct");
                 }
                 else
-                    Console.WriteLine("It's incorrect");
+                {
+                    userRequest.Status = "Error";
+                    userRequest.responseData = new ResponseData(500, "Incorrect Password");
+                    Console.WriteLine("Wrong password");
+                }
             }
             else
             {
+                userRequest.Status = "Error";
+                userRequest.responseData = new ResponseData(500, "Email not registered");
                 Console.WriteLine("No existe ese email");
             }
             await connection.CloseAsync();
-            return userLogin;
+            return userRequest;
         }
     }
 }
