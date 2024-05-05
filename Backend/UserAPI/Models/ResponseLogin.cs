@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public string LoginToken { get; set; } = string.Empty;
         public string Status { get; set; }
-        public ResponseData responseData {get; set;}
+        public ResponseData ResponseData {get; set;}
 
         public ResponseLogin()
         {
@@ -15,7 +15,7 @@
         {
             LoginToken = loginToken;
             Status = status;
-            this.responseData = responseData;
+            ResponseData = responseData;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
-using System.Net;
 using UserAPI.Models;
 
 namespace UserAPI.Controllers
@@ -153,20 +152,20 @@ namespace UserAPI.Controllers
                     string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
                     userRequest.LoginToken = token;
                     userRequest.Status = "Ok";
-                    userRequest.responseData = new ResponseData(200, "Sucess, correct password");
+                    userRequest.ResponseData = new ResponseData(200, "Sucess, correct password");
                     Console.WriteLine("It's correct");
                 }
                 else
                 {
                     userRequest.Status = "Error";
-                    userRequest.responseData = new ResponseData(500, "Incorrect Password");
+                    userRequest.ResponseData = new ResponseData(500, "Incorrect Password");
                     Console.WriteLine("Wrong password");
                 }
             }
             else
             {
                 userRequest.Status = "Error";
-                userRequest.responseData = new ResponseData(500, "Email not registered");
+                userRequest.ResponseData = new ResponseData(500, "Email not registered");
                 Console.WriteLine("No existe ese email");
             }
             await connection.CloseAsync();
