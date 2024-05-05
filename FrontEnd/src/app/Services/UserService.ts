@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
 import { ILoginRequest } from "../Models/ILoginRequest";
 import { ILoginResponse } from "../Models/ILoginResponse";
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpHeaders} from "@angular/common/http";
 import { Observable } from "rxjs";
-import { query } from "@angular/animations";
 
 @Injectable ({
     providedIn: 'root'

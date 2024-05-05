@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup} from '@angular/forms';
-import { ILoginResponse } from '../../Models/ILoginResponse';
 import { UserService } from '../../Services/UserService';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -23,8 +21,8 @@ export class LoginComponent implements OnInit
   }
 
   
-  constructor(private post: UserService) {
-    this.post.getUsers().subscribe((data) => {
+  constructor(private api: UserService) {
+    this.api.getUsers().subscribe((data) => {
       console.log(data);
     });
    }
@@ -32,7 +30,7 @@ export class LoginComponent implements OnInit
 
   OnLogin(form:any){
     console.log(form);
-    this.post.Login(form).subscribe((data) => {
+    this.api.Login(form).subscribe((data) => {
       console.log(data);
     });
   }
