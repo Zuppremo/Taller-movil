@@ -1,32 +1,69 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title class="ion-text-center">Login Application</ion-title>
-  </ion-toolbar>
-</ion-header>
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700&display=swap" rel="stylesheet">
+</head>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large" class="ion-text-center">Sign in</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-grid>
-      <ion-row class="ion-justify-content-center ion-text-center ion-padding-top">
-        <ion-col>
-          <ion-label>Email</ion-label>
-          <ion-input #email placeholder="email@domain.com" maxlength="30" class="ion-padding-horizontal ion-text-center" [clearInput]="true"></ion-input>
-        </ion-col>
-      </ion-row>
-      <br>
-      <ion-row class="ion-justify-content-center ion-text-center">
-          <ion-label>Password</ion-label>
-          <ion-input #password placeholder="Enter your password" type="password" maxlength="30" class="ion-padding-horizontal ion-text-center"> 
-          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-          </ion-input>
-      </ion-row>
-      <br>
-      <ion-row class="ion-justify-content-center">
-          <ion-button (click)="OnSubmitLogin(email.value, password.value)">Sign in</ion-button>
-      </ion-row>
+<ion-content [fullscreen]="true" class="ion-padding-top ion-padding" >
+  <ion-grid class="ion-padding-top">
+    <ion-row class="ion-justify-content-center ion-text-center ion-padding-bottom">
+        <ion-avatar> 
+          <img alt="atomic logo"src="https://www.svgrepo.com/show/452164/atom.svg"/>
+          <ion-label>
+            <br>
+            <br>
+            <h1 class="appNameLabel">Atomic</h1>
+          </ion-label>
+        </ion-avatar>
+    </ion-row>
+    <br>
+    <br>
+    <ion-row class="ion-justify-content-center ion-text-center">
+      <ion-col>
+        <ion-input
+        type="email"
+        fill="outline"
+        labelPlacement="floating"
+        #email 
+        placeholder="email@domain.com" 
+        maxlength="40" 
+        class="ion-padding-horizontal ion-text-left" [clearInput]="true">
+        <div slot="label">
+          Email 
+          <ion-text color="danger">
+            (Required)
+          </ion-text>
+        </div>
+        </ion-input>
+      </ion-col>
+    </ion-row>
+    <br>
+    <br>
+    <ion-row class="ion-justify-content-center ion-text-center">
+      <ion-col>
+        <ion-input 
+        type="password" 
+        fill="outline"
+        labelPlacement="floating"
+        #password 
+        placeholder="Password"
+        maxlength="30" 
+        class="ion-padding-horizontal ion-text-left"> 
+        <div slot="label">
+          Password 
+          <ion-text color="danger">
+            (Required)
+          </ion-text>
+        </div>
+        <ion-input-password-toggle 
+          slot="end">
+        </ion-input-password-toggle>
+        </ion-input>
+      </ion-col>
+    </ion-row>
+    <br>
+    <ion-button color="light" class="ion-margin-horizontal" expand="block" (click)="OnSubmitLogin(email.value, password.value)">
+      Login
+    </ion-button>
   </ion-grid>
 </ion-content>

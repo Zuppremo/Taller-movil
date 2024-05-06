@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ILoginRequest } from 'src/app/Models/ILoginRequest';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonInput, IonList, IonLabel, IonGrid, IonRow, IonCol, IonButton, IonInputPasswordToggle} from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonInput, IonList, IonLabel, IonGrid, IonRow, IonCol, IonButton, IonInputPasswordToggle, IonAvatar, IonText } from '@ionic/angular/standalone';
 import { UserService } from 'src/app/Services/user.service';
-import { provideHttpClient } from '@angular/common/http';
+
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.page.html',
   styleUrls: ['./login-form.page.scss'],
   standalone: true,
-  imports: [IonButton, IonCol, IonRow, IonGrid, IonLabel, IonList, 
-    IonInput, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonInputPasswordToggle],
+  imports: [IonText, IonButton, IonCol, IonRow, IonGrid, IonLabel, IonList, 
+    IonInput, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonInputPasswordToggle, IonAvatar, IonText],
 })
 export class LoginFormPage implements OnInit {
   email: string = "";
