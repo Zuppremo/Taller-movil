@@ -4,24 +4,29 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large" class="ion-text-center">Sign in</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-grid>
-    <form>
-      <ion-row class="ion-justify-content-center ion-padding-top">
-        <ion-label>Email</ion-label>
-        <ion-input type="email" placeholder="Enter your email" maxlength="30" class="ion-padding-horizontal ion-text-center"></ion-input>
+      <ion-row class="ion-justify-content-center ion-text-center ion-padding-top">
+        <ion-col>
+          <ion-label>Email</ion-label>
+          <ion-input #email placeholder="email@domain.com" maxlength="30" class="ion-padding-horizontal ion-text-center" [clearInput]="true"></ion-input>
+        </ion-col>
       </ion-row>
       <br>
-      <ion-row class="ion-justify-content-center ion-margin-top">
-        <ion-label>Password</ion-label>
-        <ion-input placeholder="Enter your password" type="password" maxlength="30" class="ion-padding-horizontal ion-text-center"></ion-input>
-        <ion-button class="ion-margin-vertical">Sign in</ion-button>
+      <ion-row class="ion-justify-content-center ion-text-center">
+          <ion-label>Password</ion-label>
+          <ion-input #password placeholder="Enter your password" type="password" maxlength="30" class="ion-padding-horizontal ion-text-center"> 
+          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+          </ion-input>
       </ion-row>
-    </form>
+      <br>
+      <ion-row class="ion-justify-content-center">
+          <ion-button (click)="OnSubmitLogin(email.value, password.value)">Sign in</ion-button>
+      </ion-row>
   </ion-grid>
 </ion-content>
