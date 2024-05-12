@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using UserAPI.Data;
 using UserAPI.Models;
 
 namespace UserAPI.Controllers
@@ -33,24 +34,11 @@ namespace UserAPI.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public async Task<User> Get(int id)
+        public async Task<User?> Get([FromServices] MySqlDataSource db, int id)
         {
-            await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-
-            using var command = new MySqlCommand(@"SELECT id_user, user_name, user_email, user_password FROM user WHERE id_user = @Id", connection);
-            command.Parameters.AddWithValue("@Id", id);
-            await using var reader = await command.ExecuteReaderAsync();
-            User user = new User();
-            while (await reader.ReadAsync())
-            {
-                user.Id = reader.GetInt32(0);
-                user.Name = reader.GetString(1);
-                user.Email = reader.GetString(2);
-                user.Password = reader.GetString(3);
-            }
-            await connection.CloseAsync();
-            return user;
+            var repository = new UserRepository(db);
+            var result = await repository.FindOneAsync(id);
+            return result;
         }
 
         // POST api/<UserController>
