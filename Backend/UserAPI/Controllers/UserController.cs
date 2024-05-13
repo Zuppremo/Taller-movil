@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
-using System.Data.Common;
 using UserAPI.Data;
 using UserAPI.Models;
 
@@ -10,7 +9,6 @@ namespace UserAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-
         // GET: api/<UserController>
         [HttpGet]
         public async Task<IEnumerable<User>> GetAllUsers([FromServices] MySqlDataSource db)
@@ -64,55 +62,40 @@ namespace UserAPI.Controllers
             await repository.DeleteAsync(result);
             return result;
         }
-        
 
         [HttpPost("Login")]
-        public async Task<ResponseLogin> UserLogin([FromBody] RequestLogin requestLogin)
+        public async Task<ResponseLogin> UserLogin([FromServices] MySqlDataSource db,[FromBody] RequestLogin requestLogin)
         {
-            ResponseLogin userRequest = new ResponseLogin();
-            await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-            string sqlEmailVerification = @"SELECT id_user FROM user WHERE user_email = @user_email;";
-            MySqlCommand command = new MySqlCommand(sqlEmailVerification, connection);
-            command.Parameters.AddWithValue("user_email", requestLogin.Email);
-            await using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-                userRequest.Id = reader.GetInt32(0);
-            await connection.CloseAsync();
-            await connection.OpenAsync();
-            if (userRequest.Id > 0)
+            var repository = new UserRepository(db);
+            ResponseLogin response = new ResponseLogin();
+            var userId = await repository.FindExistingEmail(requestLogin);
+            if (userId > 0)
             {
-                string sqlPasswordVerification = @"SELECT user_password FROM user WHERE id_user = @id;";
-                MySqlCommand commandPassword = new MySqlCommand(sqlPasswordVerification, connection);
-                commandPassword.Parameters.AddWithValue("id", userRequest.Id);
-                await using var reader2 = await commandPassword.ExecuteReaderAsync();
-                var temporaryPassword = string.Empty;
-                while (await reader2.ReadAsync())
-                    temporaryPassword = reader2.GetString(0);
-
-                if (requestLogin.Password == temporaryPassword) 
+                var correctPassword = await repository.GetUserPasswordAsync(userId);
+                Console.WriteLine("Email Exists");
+                if(correctPassword == requestLogin.Password)
                 {
                     string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-                    userRequest.LoginToken = token;
-                    userRequest.Status = "Ok";
-                    userRequest.ResponseData = new ResponseData(200, "Sucess, correct password");
+                    response.LoginToken = token;
+                    response.Status = "Ok";
+                    response.ResponseData = new ResponseData(200, "Sucess, correct password");
                     Console.WriteLine("It's correct");
                 }
                 else
                 {
-                    userRequest.Status = "Error";
-                    userRequest.ResponseData = new ResponseData(500, "Incorrect Password");
+                    response.Status = "Error";
+                    response.ResponseData = new ResponseData(500, "Incorrect Password");
                     Console.WriteLine("Wrong password");
                 }
             }
-            else
+            else 
             {
-                userRequest.Status = "Error";
-                userRequest.ResponseData = new ResponseData(500, "Email not registered");
-                Console.WriteLine("No existe ese email");
+                ResponseData responseData = new ResponseData(404, "Email doesn't exist");
+                response.LoginToken = string.Empty;
+                response.Status = "Error";
+                response.ResponseData = responseData;
             }
-            await connection.CloseAsync();
-            return userRequest;
+            return response;
         }
     }
 }
