@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using System.Data.Common;
 using UserAPI.Data;
 using UserAPI.Models;
 
@@ -12,24 +13,11 @@ namespace UserAPI.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsers([FromServices] MySqlDataSource db)
         {
-            List<User> users = new List<User>();
-            using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-            using var command = new MySqlCommand("SELECT * FROM user;", connection);
-            await using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                User user = new User();
-                user.Id = reader.GetInt32(0);
-                user.Name = reader.GetString(1);
-                user.Email = reader.GetString(2);
-                user.Password = reader.GetString(3);
-                users.Add(user);
-            }
-            await connection.CloseAsync();
-            return users;
+            var repository = new UserRepository(db);
+            var result = await repository.GetAllUsersAsync();
+            return result;
         }
 
         // GET api/<UserController>/5
@@ -43,73 +31,40 @@ namespace UserAPI.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public async Task<User> Post(string name, string email, string password)
+        public async Task<User> Post([FromServices] MySqlDataSource db, [FromBody] User body)
         {
-            await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-            string sql = @"INSERT INTO user (user_name, user_email, user_password) VALUES (@Name, @Email, @Password);";
-            User userToCreate = new User();
-            MySqlCommand command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Name", name);
-            userToCreate.Name = name;
-            command.Parameters.AddWithValue("@Email", email);
-            userToCreate.Email = email;
-            command.Parameters.AddWithValue("@Password", password);
-            userToCreate.Password = password;
-            await using var reader = await command.ExecuteReaderAsync();
-            await connection.CloseAsync();
-            return userToCreate;
+            var repository = new UserRepository(db);
+            await repository.InsertAsync(body);
+            return body;
         }
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<User> Put(int id, string name, string email, string password)
+        public async Task<User> Put(int id, [FromServices] MySqlDataSource db, [FromBody]User body)
         {
-            await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-            string sql = @"UPDATE user SET user_name = @Name, user_email = @Email, user_password = @Password WHERE id_user = @Id";
-            MySqlCommand command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Id", id);
-            command.Parameters.AddWithValue("@Name", name);
-            command.Parameters.AddWithValue("@Email", email);
-            command.Parameters.AddWithValue("@Password", password);
-            User user = new User();
-            user.Id = id;
-            user.Name = name;
-            user.Email = email;
-            user.Password = password;
-            await using var reader = await command.ExecuteReaderAsync();
-            await connection.CloseAsync();
-            return user;
+            var repository = new UserRepository(db);
+            var result = await repository.FindOneAsync(id);
+            if (result == null)
+                return null;
+            result.Name = body.Name;
+            result.Email = body.Email;
+            result.Password = body.Password;
+            await repository.UpdateAsync(result);
+            return result;
         }
-
+        
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public async Task<User> Delete(int id)
+        public async Task<User> Delete([FromServices] MySqlDataSource db, int id)
         {
-            User userDeleted = new User();
-            await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-            string sqlSelectUser = @"SELECT * FROM user WHERE id_user = @Id";
-            MySqlCommand selectCommand = new MySqlCommand(sqlSelectUser, connection);
-            selectCommand.Parameters.AddWithValue("@Id", id);
-            await using var reader = await selectCommand.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                userDeleted.Id = reader.GetInt32(0);
-                userDeleted.Name = reader.GetString(1);
-                userDeleted.Email = reader.GetString(2);
-                userDeleted.Password = reader.GetString(3);
-            }
-            await connection.CloseAsync();
-            await connection.OpenAsync();
-            string sql = @"DELETE FROM user WHERE id_user = @Id";
-            MySqlCommand deleteCommand = new MySqlCommand(sql, connection);
-            deleteCommand.Parameters.AddWithValue("@Id", id);
-            await using var deleteReader = await deleteCommand.ExecuteReaderAsync();
-            await connection.CloseAsync();
-            return userDeleted;
+            var repository = new UserRepository(db);
+            var result = await repository.FindOneAsync(id);
+            if (result == null)
+                return null;
+            await repository.DeleteAsync(result);
+            return result;
         }
+        
 
         [HttpPost("Login")]
         public async Task<ResponseLogin> UserLogin([FromBody] RequestLogin requestLogin)

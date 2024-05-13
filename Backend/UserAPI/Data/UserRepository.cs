@@ -6,7 +6,6 @@ namespace UserAPI.Data
 {
     public class UserRepository(MySqlDataSource database)
     {
-        
         public async Task<User?> FindOneAsync(int id)
         {
             using var connection = await database.OpenConnectionAsync();
@@ -17,11 +16,12 @@ namespace UserAPI.Data
             return result.FirstOrDefault();
         }
 
-        public async Task<IReadOnlyList<User>> LatestUsersAsync()
+        public async Task<IReadOnlyList<User>> GetAllUsersAsync()
         {
             using var connection = await database.OpenConnectionAsync();
             using var command = connection.CreateCommand();
-            command.CommandText = @"SELECT id_user, user_name, user_email, user_password FROM user ORDER BY `Id` DESC LIMIT 10;";
+            command.CommandText = @"SELECT * FROM user;";
+            await connection.CloseAsync();
             return await ReadAllAsync(await command.ExecuteReaderAsync());
         }
 
@@ -57,7 +57,7 @@ namespace UserAPI.Data
         {
             using var connection = await database.OpenConnectionAsync();
             using var command = connection.CreateCommand();
-            command.CommandText = @"DELETE FROM `user` WHERE `Id` = @Id;";
+            command.CommandText = @"DELETE FROM `user` WHERE `id_user` = @Id;";
             BindId(command, user);
             await command.ExecuteNonQueryAsync();
         }
