@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
+using UserAPI.Context;
 using UserAPI.Models;
 
 namespace UserAPI.Controllers
@@ -8,26 +10,18 @@ namespace UserAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly UserDataContext _context;
+
+        public UserController(UserDataContext context)
+        {
+            _context = context;
+        }
 
         // GET: api/<UserController>
         [HttpGet]
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            List<User> users = new List<User>();
-            using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-            using var command = new MySqlCommand("SELECT * FROM user;", connection);
-            await using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                User user = new User();
-                user.Id = reader.GetInt32(0);
-                user.Name = reader.GetString(1);
-                user.Email = reader.GetString(2);
-                user.Password = reader.GetString(3);
-                users.Add(user);
-            }
-            await connection.CloseAsync();
+            var users = _context.Users.ToListAsync<User>().Result;
             return users;
         }
 
@@ -35,21 +29,7 @@ namespace UserAPI.Controllers
         [HttpGet("{id}")]
         public async Task<User> Get(int id)
         {
-            await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-
-            using var command = new MySqlCommand(@"SELECT id_user, user_name, user_email, user_password FROM user WHERE id_user = @Id", connection);
-            command.Parameters.AddWithValue("@Id", id);
-            await using var reader = await command.ExecuteReaderAsync();
-            User user = new User();
-            while (await reader.ReadAsync())
-            {
-                user.Id = reader.GetInt32(0);
-                user.Name = reader.GetString(1);
-                user.Email = reader.GetString(2);
-                user.Password = reader.GetString(3);
-            }
-            await connection.CloseAsync();
+            var user = _context.Users.Where(selectedUser => selectedUser.Id == id).FirstOrDefault();
             return user;
         }
 
@@ -57,41 +37,23 @@ namespace UserAPI.Controllers
         [HttpPost]
         public async Task<User> Post(string name, string email, string password)
         {
-            await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-            string sql = @"INSERT INTO user (user_name, user_email, user_password) VALUES (@Name, @Email, @Password);";
             User userToCreate = new User();
-            MySqlCommand command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Name", name);
             userToCreate.Name = name;
-            command.Parameters.AddWithValue("@Email", email);
             userToCreate.Email = email;
-            command.Parameters.AddWithValue("@Password", password);
             userToCreate.Password = password;
-            await using var reader = await command.ExecuteReaderAsync();
-            await connection.CloseAsync();
+            _context.Add(userToCreate);
+            await _context.SaveChangesAsync();
             return userToCreate;
         }
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<User> Put(int id, string name, string email, string password)
+        public async Task<User> Put(int id, User user)
         {
-            await using var connection = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=admin;Database=movildb");
-            await connection.OpenAsync();
-            string sql = @"UPDATE user SET user_name = @Name, user_email = @Email, user_password = @Password WHERE id_user = @Id";
-            MySqlCommand command = new MySqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Id", id);
-            command.Parameters.AddWithValue("@Name", name);
-            command.Parameters.AddWithValue("@Email", email);
-            command.Parameters.AddWithValue("@Password", password);
-            User user = new User();
-            user.Id = id;
-            user.Name = name;
-            user.Email = email;
-            user.Password = password;
-            await using var reader = await command.ExecuteReaderAsync();
-            await connection.CloseAsync();
+            if (id != user.Id)
+                return null;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
             return user;
         }
 
